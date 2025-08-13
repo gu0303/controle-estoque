@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -16,18 +15,42 @@ class ItemController extends Controller
     {
         $query = Item::with('categoria');
 
-        if ($request->filled('busca')) {
-            $query->buscar($request->busca);
+        // Filtro por busca
+        if ($request->filled('search')) {
+            $query->where('nome', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->filled('categoria_id')) {
-            $query->porCategoria($request->categoria_id);
+        // Filtro por categoria
+        if ($request->filled('categoria')) {
+            $query->where('categoria_id', $request->categoria);
         }
 
-        $items = $query->paginate(15);
+        // Filtro por estoque
+        if ($request->filled('estoque')) {
+            if ($request->estoque == 'baixo') {
+                $query->whereRaw('quantidade <= estoque_minimo');
+            } elseif ($request->estoque == 'zerado') {
+                $query->where('quantidade', 0);
+            }
+        }
+
+        $items = $query->orderBy('nome')->paginate(15);
         $categorias = Categoria::all();
 
-        return view('items.index', compact('items', 'categorias'));
+        // Estatísticas para os cards
+        $totalItens = Item::count();
+        $itensComEstoque = Item::where('quantidade', '>', 0)->count();
+        $itensEstoqueBaixo = Item::whereRaw('quantidade <= estoque_minimo')->count();
+        $itensSemEstoque = Item::where('quantidade', 0)->count();
+
+        return view('items.index', compact(
+            'items', 
+            'categorias', 
+            'totalItens', 
+            'itensComEstoque', 
+            'itensEstoqueBaixo', 
+            'itensSemEstoque'
+        ));
     }
 
     /**
@@ -48,19 +71,14 @@ class ItemController extends Controller
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'quantidade' => 'required|integer|min:0',
-            'unidade' => 'required|string|max:50',
+            'unidade' => 'required|string|max:10',
             'categoria_id' => 'required|exists:categorias,id',
-            'observacao' => 'nullable|string',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'estoque_minimo' => 'nullable|integer|min:0',
+            'preco_unitario' => 'nullable|numeric|min:0',
+            'localizacao' => 'nullable|string|max:255',
         ]);
 
-        $data = $request->all();
-
-        if ($request->hasFile('imagem')) {
-            $data['caminho_imagem'] = $request->file('imagem')->store('items', 'public');
-        }
-
-        Item::create($data);
+        $item = Item::create($request->all());
 
         return redirect()->route('items.index')
             ->with('success', 'Item criado com sucesso!');
@@ -72,6 +90,7 @@ class ItemController extends Controller
     public function show(Item $item)
     {
         $item->load(['categoria', 'movimentacoes.user']);
+        
         return view('items.show', compact('item'));
     }
 
@@ -92,23 +111,16 @@ class ItemController extends Controller
         $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
-            'quantidade' => 'required|integer|min:0',
-            'unidade' => 'required|string|max:50',
+            'unidade' => 'required|string|max:10',
             'categoria_id' => 'required|exists:categorias,id',
-            'observacao' => 'nullable|string',
-            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'estoque_minimo' => 'nullable|integer|min:0',
+            'preco_unitario' => 'nullable|numeric|min:0',
+            'localizacao' => 'nullable|string|max:255',
         ]);
 
-        $data = $request->all();
-
-        if ($request->hasFile('imagem')) {
-            // Remove imagem anterior se existir
-            if ($item->caminho_imagem) {
-                Storage::disk('public')->delete($item->caminho_imagem);
-            }
-            $data['caminho_imagem'] = $request->file('imagem')->store('items', 'public');
-        }
-
+        // Remove quantidade da atualização - só pode ser alterada via movimentações
+        $data = $request->except(['quantidade']);
+        
         $item->update($data);
 
         return redirect()->route('items.index')
@@ -120,14 +132,10 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        if ($item->quantidade > 0) {
+        // Verificar se o item tem movimentações
+        if ($item->movimentacoes()->count() > 0) {
             return redirect()->route('items.index')
-                ->with('error', 'Não é possível excluir um item com quantidade em estoque.');
-        }
-
-        // Remove imagem se existir
-        if ($item->caminho_imagem) {
-            Storage::disk('public')->delete($item->caminho_imagem);
+                ->with('error', 'Não é possível excluir um item que possui movimentações.');
         }
 
         $item->delete();

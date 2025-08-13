@@ -52,7 +52,8 @@ class MovimentacaoEstoqueController extends Controller
             'item_id' => 'required|exists:items,id',
             'tipo' => 'required|in:entrada,saida',
             'quantidade' => 'required|integer|min:1',
-            'descricao' => 'required|string'
+            'descricao' => 'required|string',
+            'data_movimentacao' => 'required|date'
         ]);
 
         $item = Item::findOrFail($request->item_id);
@@ -80,12 +81,10 @@ class MovimentacaoEstoqueController extends Controller
                 $item->increment('quantidade', $request->quantidade);
             } else {
                 $item->decrement('quantidade', $request->quantidade);
-            }
-        });
+            });
 
         return redirect()->route('movimentacoes.index')
             ->with('success', 'Movimentação registrada com sucesso!');
-    }
 
     /**
      * Display the specified resource.
@@ -166,7 +165,6 @@ class MovimentacaoEstoqueController extends Controller
             $item->decrement('quantidade', $request->quantidade);
         });
 
-        return redirect()->route('movimentacoes.index')
-            ->with('success', 'Baixa registrada com sucesso!');
+        return $this->index($request)->with("success", "Baixa registrada com sucesso!");
     }
 }

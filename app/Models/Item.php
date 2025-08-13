@@ -20,8 +20,9 @@ class Item extends Model
         'quantidade',
         'unidade',
         'categoria_id',
-        'caminho_imagem',
-        'observacao',
+        'estoque_minimo',
+        'preco_unitario',
+        'localizacao',
     ];
 
     /**
