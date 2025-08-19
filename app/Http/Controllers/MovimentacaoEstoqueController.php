@@ -83,9 +83,9 @@ class MovimentacaoEstoqueController extends Controller
                 $item->decrement('quantidade', $request->quantidade);
             }
 
+        });
         return redirect()->route('movimentacoes.index')
             ->with('success', 'Movimentação registrada com sucesso!');
-        });
     }
     
     /**
