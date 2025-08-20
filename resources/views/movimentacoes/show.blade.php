@@ -3,7 +3,7 @@
 @section('title', 'Movimentação #' . $movimentacao->id)
 
 @section('actions')
-    <a href='{{ route('items.show', $movimentacao->item) }}' class='btn btn-info'>
+    <a href='{{ route('items.show', $movimentacao->item->id) }}' class='btn btn-info'>
         <i class='fas fa-box me-2'></i>Ver Item
     </a>
     <a href='{{ route('movimentacoes.index') }}' class='btn btn-secondary'>
@@ -282,7 +282,7 @@
                     </div>
                     
                     <div class='col-md-3 mb-3'>
-                        <a href='{{ route('items.show', $movimentacao->item) }}' class='btn btn-info btn-lg w-100'>
+                        <a href='{{ route('items.show', $movimentacao->item->id) }}' class='btn btn-info btn-lg w-100'>
                             <i class='fas fa-box me-2'></i>
                             Ver Item
                         </a>
