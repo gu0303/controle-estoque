@@ -91,9 +91,8 @@ class MovimentacaoEstoqueController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MovimentacaoEstoque $movimentacao)
-    {
-        $movimentacao->load(['item', 'user']);
+        public function show($id){
+        $movimentacao = MovimentacaoEstoque::with(['item', 'user'])->findOrFail($id);
         return view('movimentacoes.show', compact('movimentacao'));
     }
 
