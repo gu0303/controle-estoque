@@ -34,14 +34,16 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:administrador,gerente_estoque,operador'
+            'role' => 'required|in:administrador,gerente_estoque,operador',
+            'status' => 'required|boolean', 
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role
+            'role' => $request->role,
+            'status' => $request->status, 
         ]);
 
         return redirect()->route('users.index')
@@ -72,17 +74,19 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'role' => 'required|in:administrador,gerente_estoque,operador'
+            'role' => 'required|in:administrador,gerente_estoque,operador',
+            'status' => 'required|boolean',
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role
+            'role' => $request->role,
+            'status' => $request->status, 
         ];
 
-        // Só atualiza a senha se foi fornecida
-        if ($request->filled('password')) {
+        // Atualiza a senha somente se preenchida pelo usuário
+        if (auth()->id() === $user->id && $request->filled('password')) {
             $request->validate([
                 'password' => 'required|string|min:8|confirmed'
             ]);
