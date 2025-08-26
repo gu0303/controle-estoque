@@ -39,7 +39,7 @@ class MovimentacaoEstoqueController extends Controller
      */
     public function create()
     {
-        $items = Item::where('quantidade', '>', 0)->get();
+        $items = Item::all();
         return view('movimentacoes.create', compact('items'));
     }
 

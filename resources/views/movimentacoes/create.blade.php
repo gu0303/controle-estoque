@@ -15,7 +15,8 @@
             <div class="card-body">
                 <form action="{{ route('movimentacoes.store') }}" method="POST">
                     @csrf
-                    
+
+                    <!-- Seleção de Item -->
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -24,9 +25,10 @@
                                         id="item_id" name="item_id" required>
                                     <option value="">Selecione um item</option>
                                     @foreach($items as $item)
-                                    <option value="{{ $item->id }}" {{ old('item_id') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->nome }} ({{ $item->quantidade }} {{ $item->unidade }})
-                                    </option>
+                                        <option value="{{ $item->id }}" data-quantidade="{{ $item->quantidade }}"
+                                            {{ old('item_id') == $item->id ? 'selected' : '' }}>
+                                            {{ $item->nome }} ({{ $item->quantidade }} {{ $item->unidade }})
+                                        </option>
                                     @endforeach
                                 </select>
                                 @error('item_id')
@@ -34,12 +36,12 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
+                        <!-- Tipo de Movimentação -->
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="tipo" class="form-label">Tipo de Movimentação *</label>
-                                <select class="form-select @error('tipo') is-invalid @enderror" 
-                                        id="tipo" name="tipo" required>
+                                <select class="form-select @error('tipo') is-invalid @enderror" id="tipo" name="tipo" required>
                                     <option value="">Selecione o tipo</option>
                                     <option value="entrada" {{ old('tipo') == 'entrada' ? 'selected' : '' }}>
                                         Entrada (Adicionar ao estoque)
@@ -54,7 +56,8 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Quantidade e Data/Hora -->
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -67,7 +70,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="col-md-8">
                             <div class="mb-3">
                                 <label for="data_movimentacao" class="form-label">Data e Hora *</label>
@@ -80,7 +83,8 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <!-- Descrição -->
                     <div class="mb-3">
                         <label for="descricao" class="form-label">Descrição *</label>
                         <textarea class="form-control @error('descricao') is-invalid @enderror" 
@@ -90,7 +94,8 @@
                         @enderror
                         <div class="form-text">Descreva o motivo da movimentação (ex: Compra, Venda, Ajuste de estoque, etc.).</div>
                     </div>
-                    
+
+                    <!-- Botões -->
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('movimentacoes.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Voltar
@@ -104,5 +109,9 @@
         </div>
     </div>
 </div>
+
 @endsection
 
+@section('scripts')
+<script src="{{ asset('js/app.js') }}"></script>
+@endsection
