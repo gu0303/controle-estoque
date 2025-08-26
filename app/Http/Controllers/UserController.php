@@ -82,15 +82,23 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
-            'status' => $request->status, 
         ];
 
-        // Atualiza a senha somente se preenchida pelo usuário
+        // Atualiza a senha apenas se for o próprio usuário e campo preenchido
         if (auth()->id() === $user->id && $request->filled('password')) {
             $request->validate([
                 'password' => 'required|string|min:8|confirmed'
             ]);
             $data['password'] = Hash::make($request->password);
+        }
+        
+        // Controle de status
+        if (auth()->user()->role === 'administrador' && auth()->id() !== $user->id) {
+            // Administrador alterando outro usuário → aplica status enviado
+            $data['status'] = (int) $request->status; // garante 0 ou 1
+        } else {
+            // Usuário comum ou admin tentando alterar a si próprio → mantém o status atual
+            $data['status'] = $user->status;
         }
 
         $user->update($data);

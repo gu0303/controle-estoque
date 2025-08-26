@@ -25,8 +25,20 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Autentica usuário (email + senha)
         $request->authenticate();
 
+        // Recupera o usuário autenticado
+        $user = $request->user();
+
+        // Verifica se o usuário está ativo
+        if (!$user->status) {
+            Auth::guard('web')->logout();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Sua conta está inativa. Contate um administrador.']);
+        }
+
+        // Regenera sessão normalmente
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME);
