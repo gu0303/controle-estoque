@@ -23,6 +23,7 @@ class Item extends Model
         'estoque_minimo',
         'preco_unitario',
         'localizacao',
+        'imagem',
     ];
 
     /**

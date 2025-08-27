@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -65,24 +66,29 @@ class ItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'nullable|string',
-            'quantidade' => 'required|integer|min:0',
-            'unidade' => 'required|string|max:10',
-            'categoria_id' => 'required|exists:categorias,id',
-            'estoque_minimo' => 'nullable|integer|min:0',
-            'preco_unitario' => 'nullable|numeric|min:0',
-            'localizacao' => 'nullable|string|max:255',
-        ]);
+    public function store(Request $request){
+    $validated = $request->validate([
+        'nome' => 'required|string|max:255',
+        'descricao' => 'nullable|string',
+        'quantidade' => 'required|integer|min:0',
+        'unidade' => 'required|string|max:10',
+        'categoria_id' => 'required|exists:categorias,id',
+        'estoque_minimo' => 'nullable|integer|min:0',
+        'preco_unitario' => 'nullable|numeric|min:0',
+        'localizacao' => 'nullable|string|max:255',
+        'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
 
-        $item = Item::create($request->all());
-
-        return redirect()->route('items.index')
-            ->with('success', 'Item criado com sucesso!');
+    // Upload da imagem
+    if ($request->hasFile('imagem')) {
+        $path = $request->file('imagem')->store('itens', 'public');
+        $validated['imagem'] = $path;
     }
+
+    Item::create($validated);
+
+    return redirect()->route('items.index')->with('success', 'Item criado com sucesso!');
+}
 
     /**
      * Display the specified resource.
@@ -116,14 +122,25 @@ class ItemController extends Controller
             'estoque_minimo' => 'nullable|integer|min:0',
             'preco_unitario' => 'nullable|numeric|min:0',
             'localizacao' => 'nullable|string|max:255',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Remove quantidade da atualização - só pode ser alterada via movimentações
-        $data = $request->except(['quantidade']);
-        
+        $data = $request->except(['quantidade']); // Quantidade não atualiza aqui
+
+        // Processar upload da imagem
+        if ($request->hasFile('imagem')) {
+            // Deletar imagem antiga, se existir
+            if ($item->imagem && Storage::disk('public')->exists($item->imagem)) {
+                Storage::disk('public')->delete($item->imagem);
+            }
+
+            $path = $request->file('imagem')->store('itens', 'public');
+            $data['imagem'] = $path;
+        }
+
         $item->update($data);
 
-        return redirect()->route('items.index')
+        return redirect()->route('items.show', $item)
             ->with('success', 'Item atualizado com sucesso!');
     }
 

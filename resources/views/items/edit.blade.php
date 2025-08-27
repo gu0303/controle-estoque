@@ -13,7 +13,7 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('items.update', $item) }}" method="POST">
+                <form action="{{ route('items.update', $item) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
@@ -50,6 +50,22 @@
                     </div>
                     
                     <div class="mb-3">
+                        {{-- Campo para imagem --}}
+                        <div class="mb-3">
+                            <label for="imagem" class="form-label">Imagem do Item</label>
+                            @if($item->imagem)
+                                <div class="mb-2">
+                                    <img src="{{ asset('storage/' . $item->imagem) }}" alt="{{ $item->nome }}" 
+                                        class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                            @endif
+                            <input type="file" class="form-control @error('imagem') is-invalid @enderror" 
+                                id="imagem" name="imagem" accept="image/*">
+                            @error('imagem')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text">Selecione uma nova imagem para atualizar o item (opcional).</div>
+                        </div>
                         <label for="descricao" class="form-label">Descrição</label>
                         <textarea class="form-control @error('descricao') is-invalid @enderror" 
                                   id="descricao" name="descricao" rows="3">{{ old('descricao', $item->descricao) }}</textarea>
