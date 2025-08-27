@@ -36,7 +36,8 @@
                     <label for="password" class="form-label">Nova Senha</label>
                     <input type="password" name="password" id="password"
                            class="form-control @error('password') is-invalid @enderror"
-                           placeholder="Deixe em branco para não alterar">
+                           placeholder="Deixe em branco para não alterar"
+                           autocomplete="new-password">
                     <small class="text-muted">Preencha apenas se quiser alterar a senha.</small>
                     @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
@@ -44,7 +45,8 @@
                 <div class="mb-3">
                     <label for="password_confirmation" class="form-label">Confirmar Nova Senha</label>
                     <input type="password" name="password_confirmation" id="password_confirmation"
-                           class="form-control" placeholder="Digite apenas se for alterar a senha">
+                           class="form-control" placeholder="Digite apenas se for alterar a senha"
+                           autocomplete="new-password">
                 </div>
             @endif
 
