@@ -1,6 +1,6 @@
-## SEDESE
+## Instituição: SEDESE
 
-##### Sistema criado por desenvolvedores da DGDIT.
+##### Unidade de exercício: Diretoria de Gestão Documental, Informação e Tecnologia
 
 
 ### Versões:
