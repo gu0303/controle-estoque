@@ -8,9 +8,6 @@
 - PHP: 8.1
 - Laravel: 10.10
 
-### Domínio:
-
-
 ##
 
 ### Como rodar local:
