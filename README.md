@@ -1,6 +1,6 @@
 ## Instituição: SEDESE
 
-##### Unidade de exercício: Diretoria de Gestão Documental, Informação e Tecnologia
+##### Unidade responsável: Diretoria de Gestão Documental, Informação e Tecnologia.
 
 
 ### Versões:
