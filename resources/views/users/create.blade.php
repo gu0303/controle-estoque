@@ -24,8 +24,8 @@
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="email" name="email" id="email" 
-                       class="form-control @error('email') is-invalid @enderror" 
-                       value="{{ old('email') }}" required>
+                    class="form-control @error('email') is-invalid @enderror" 
+                    value="" autocomplete="new-email" required>
                 @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
@@ -33,7 +33,8 @@
             <div class="mb-3">
                 <label for="password" class="form-label">Senha</label>
                 <input type="password" name="password" id="password" 
-                       class="form-control @error('password') is-invalid @enderror" required>
+                    class="form-control @error('password') is-invalid @enderror" 
+                    autocomplete="new-password" required>
                 @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
@@ -41,7 +42,7 @@
             <div class="mb-3">
                 <label for="password_confirmation" class="form-label">Confirmar Senha</label>
                 <input type="password" name="password_confirmation" id="password_confirmation" 
-                       class="form-control" required>
+                    class="form-control" autocomplete="new-password" required>
             </div>
 
             {{-- Tipo de Usuário --}}
