@@ -6,6 +6,9 @@
     <a href="{{ route('movimentacoes.create') }}" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Nova Movimentação
     </a>
+    <a href='{{ route('dashboard') }}' class='btn btn-secondary'>
+        <i class='fas fa-arrow-left me-2'></i>Dashboard
+    </a>
 @endsection
 
 @section('content')
