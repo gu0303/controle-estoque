@@ -54,10 +54,13 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     @if($categoria->items_count == 0)
-                                    <form action="{{ route('categorias.destroy', $categoria) }}" method="POST" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?')">
+                                    <form action="{{ route('categorias.destroy', $categoria) }}" method="POST"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir esta categoria?')" 
+                                        style="display: contents;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
+                                        <button type="submit" class="btn btn-sm btn-danger rounded-0 rounded-end" 
+                                            style="border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
