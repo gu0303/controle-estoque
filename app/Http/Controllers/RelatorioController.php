@@ -62,8 +62,12 @@ class RelatorioController extends Controller
     /**
      * Relatório de itens com estoque baixo
      */
-    public function estoqueBaixo(Request $request)
-    {
+    public function estoqueBaixo(Request $request){
+
+        $validated = $request->validate([
+        'limite' => 'nullable|integer|min:0'
+        ]);
+
         $limite = $request->get('limite', 5);
         
         $items = Item::with('categoria')

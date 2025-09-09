@@ -65,8 +65,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/relatorios/estoque-baixo', [RelatorioController::class, 'estoqueBaixo'])->name('relatorios.estoque-baixo');
         
         // Exportações
-        Route::get('/relatorios/exportar/estoque-atual', [RelatorioController::class, 'exportarEstoqueAtual'])->name('relatorios.exportar.estoque-atual');
-        Route::get('/relatorios/exportar/movimentacoes', [RelatorioController::class, 'exportarMovimentacoes'])->name('relatorios.exportar.movimentacoes');
+        Route::get('/relatorios/exportar/estoque-atual', [RelatorioController::class, 'exportarEstoqueAtual'])->name('relatorios.exportar-estoque-atual');
+        Route::get('/relatorios/exportar/movimentacoes', [RelatorioController::class, 'exportarMovimentacoes'])->name('relatorios.exportar-movimentacoes');
     });
 });
 
